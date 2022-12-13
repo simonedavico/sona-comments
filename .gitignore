@@ -32,3 +32,5 @@ sona_comments-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# docker compose volumes
+.volumes/

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: db
+    image: postgres:11.6
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: sona_comment_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./.volumes/db/data:/var/lib/postgresql/data
+    networks:
+      - default
