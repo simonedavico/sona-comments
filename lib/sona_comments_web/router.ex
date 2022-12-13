@@ -17,7 +17,8 @@ defmodule SonaCommentsWeb.Router do
   scope "/", SonaCommentsWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    # get "/", PageController, :index
+    live "/", CommentLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
