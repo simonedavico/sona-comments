@@ -1,45 +1,68 @@
-defmodule SonaCommentsWeb.CommentLiveTest do
+defmodule SonaCommentsWeb.Integration.CommentLiveTest do
   use SonaCommentsWeb.ConnCase
 
   import Phoenix.LiveViewTest
   import SonaComments.CommentsFixtures
 
-  @create_attrs %{body: "some body"}
-  @update_attrs %{body: "some updated body"}
+  @create_attrs %{body: "a new comment"}
+  @reply_attrs %{body: "a new reply"}
   @invalid_attrs %{body: nil}
 
   defp create_comment(_) do
-    comment = comment_fixture()
-    %{comment: comment}
+    top_comment = comment_fixture()
+
+    %{
+      comments: [
+        top_comment,
+        comment_fixture(body: "A reply", parent_id: top_comment.id),
+        comment_fixture(body: "Another reply", parent_id: top_comment.id)
+      ]
+    }
   end
 
   describe "Index" do
     setup [:create_comment]
 
-    test "lists all comments", %{conn: conn, comment: comment} do
-      {:ok, _index_live, html} = live(conn, Routes.comment_index_path(conn, :index))
+    test "lists all comments", %{conn: conn, comments: comments} do
+      {:ok, _view, html} = live(conn, Routes.comment_index_path(conn, :index))
 
-      assert html =~ comment.body
+      for comment <- comments do
+        assert html =~ comment.body
+      end
     end
 
-    test "saves new comment", %{conn: conn} do
-      {:ok, index_live, html} = live(conn, Routes.comment_index_path(conn, :index))
+    test "saves a new comment", %{conn: conn} do
+      {:ok, view, _html} = live(conn, Routes.comment_index_path(conn, :index))
 
-      assert index_live
+      assert view
              |> form("#comment-form", comment: @invalid_attrs)
              |> render_change() =~ "You cannot post an empty comment"
 
-      index_live
-      |> form("#comment-form", comment: @create_attrs)
-      |> render_submit()
+      result =
+        view
+        |> form("#comment-form", comment: @create_attrs)
+        |> render_submit()
 
-      assert html =~ "some body"
+      assert result =~ @create_attrs.body
     end
+  end
 
-    test "shows an error flash when comment cannot be posted", %{conn: conn} do
-      {:ok, index_live, html} = live(conn, Routes.comment_index_path(conn, :index))
+  describe "CommentThreadComponent" do
+    setup [:create_comment]
 
-      assert html =~ "some body"
+    test "replies to a comment", %{conn: conn, comments: comments} do
+      {:ok, view, _html} = live(conn, Routes.comment_index_path(conn, :index))
+
+      view
+      |> element("#comment-#{Enum.at(comments, 0).id} > button", "Reply")
+      |> render_click()
+
+      result =
+        view
+        |> form("#comment-#{Enum.at(comments, 0).id} form", comment: @reply_attrs)
+        |> render_submit()
+
+      assert result =~ @reply_attrs.body
     end
   end
 end

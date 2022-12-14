@@ -1,4 +1,3 @@
-
 <.form :let={f} for={@changeset} phx-change="validate" phx-submit="save-comment" id="comment-form">
   <%= textarea f,
     :body,
@@ -13,9 +12,8 @@
   </div>
 </.form>
 
-
-<ul id="comments" phx-update="prepend" aria-live-region="polite">
+<article id="comments" phx-update="prepend" aria-live-region="polite">
   <%= for comment <- @comments do %>
-      <.live_component module={CommentThreadComponent} id={"comment-#{comment.id}"} comment={comment} />
+      <.live_component module={CommentThreadComponent} id={comment.id} comment={comment} />
   <% end %>
-</ul>
+</article>

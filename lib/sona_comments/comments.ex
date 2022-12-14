@@ -104,8 +104,9 @@ defmodule SonaComments.Comments do
   end
 
   def get_replies(parent_ids) do
-    # TODO: implement
-    %{}
+    from(c in Comment, where: c.parent_id in ^parent_ids)
+    |> Repo.all()
+    |> Enum.group_by(& &1.parent_id)
   end
 
   @doc """
