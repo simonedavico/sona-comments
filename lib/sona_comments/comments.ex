@@ -8,6 +8,12 @@ defmodule SonaComments.Comments do
 
   alias SonaComments.Comments.Comment
 
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(SonaComments.PubSub, @topic)
+  end
+
   @doc """
   Returns the list of comments.
 
@@ -67,6 +73,17 @@ defmodule SonaComments.Comments do
     %Comment{}
     |> Comment.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_comment(:new_comment)
+  end
+
+  defp broadcast_comment({:error, _} = error, _event), do: error
+  defp broadcast_comment({:ok, comment}, event) do
+    Phoenix.PubSub.broadcast!(
+      SonaComments.PubSub,
+      @topic,
+      {event, comment}
+    )
+    {:ok, comment}
   end
 
   @doc """

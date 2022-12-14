@@ -9,6 +9,8 @@ defmodule SonaCommentsWeb.CommentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Comments.subscribe()
+
     socket =
       assign(socket,
         comments: Comments.list_top_level_comments(),
@@ -24,7 +26,7 @@ defmodule SonaCommentsWeb.CommentLive.Index do
       {:ok, comment} ->
         {:noreply,
          assign(socket,
-           comments: Comments.list_top_level_comments(),
+           comments: [comment],
            changeset: Comments.change_comment()
          )}
 
@@ -47,10 +49,15 @@ defmodule SonaCommentsWeb.CommentLive.Index do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    comment = Comments.get_comment!(id)
-    {:ok, _} = Comments.delete_comment(comment)
-
-    {:noreply, assign(socket, :comments, Comments.list_comments())}
+  def handle_info({:new_comment, comment}, socket) do
+    if is_reply?(comment) do
+      send_update(CommentThreadComponent, id: comment.parent_id, replies: [comment])
+      {:noreply, socket}
+    else
+      {:noreply, assign(socket, comments: [comment])}
+    end
   end
+
+  defp is_reply?(%Comment{parent_id: nil}), do: false
+  defp is_reply?(%Comment{parent_id: _}), do: true
 end

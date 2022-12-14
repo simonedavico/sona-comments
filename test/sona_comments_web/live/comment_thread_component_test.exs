@@ -7,6 +7,7 @@ defmodule SonaCommentsWeb.CommentThreadComponentTest do
   alias SonaCommentsWeb.CommentLive.CommentThreadComponent
 
   # this test is limited, interactions have to be tested through a LiveView
+  # UPDATE: this could probably be done with live_isolated
   describe "CommentThreadComponent" do
 
     test "renders the comment" do

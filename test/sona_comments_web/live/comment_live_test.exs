@@ -3,6 +3,7 @@ defmodule SonaCommentsWeb.Integration.CommentLiveTest do
 
   import Phoenix.LiveViewTest
   import SonaComments.CommentsFixtures
+  import SonaComments.Support.TimeHelper
 
   @create_attrs %{body: "a new comment"}
   @reply_attrs %{body: "a new reply"}
@@ -44,6 +45,18 @@ defmodule SonaCommentsWeb.Integration.CommentLiveTest do
         |> render_submit()
 
       assert result =~ @create_attrs.body
+    end
+
+    test "displays broadcast comments", %{conn: conn} do
+      {:ok, view, _html} = live(conn, Routes.comment_index_path(conn, :index))
+
+      new_comment = comment_fixture(body: "broadcast comment")
+
+      send(view.pid, {:new_comment, new_comment})
+
+      wait_until(fn ->
+        assert render(view) =~ "broadcast comment"
+      end)
     end
   end
 
