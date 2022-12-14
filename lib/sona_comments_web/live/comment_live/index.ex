@@ -5,11 +5,13 @@ defmodule SonaCommentsWeb.CommentLive.Index do
   alias SonaComments.Comments
   alias SonaComments.Comments.Comment
 
+  alias SonaCommentsWeb.CommentLive.CommentThreadComponent
+
   @impl true
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        comments: Comments.list_comments(),
+        comments: Comments.list_top_level_comments(),
         changeset: Comments.change_comment()
       )
 
@@ -21,7 +23,10 @@ defmodule SonaCommentsWeb.CommentLive.Index do
     case Comments.create_comment(comment_params) do
       {:ok, comment} ->
         {:noreply,
-         assign(socket, comments: Comments.list_comments(), changeset: Comments.change_comment())}
+         assign(socket,
+           comments: Comments.list_top_level_comments(),
+           changeset: Comments.change_comment()
+         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

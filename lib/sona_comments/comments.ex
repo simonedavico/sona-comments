@@ -22,6 +22,20 @@ defmodule SonaComments.Comments do
   end
 
   @doc """
+  Returns the list of top-level comments (i.e. not replies).
+
+  ## Examples
+
+      iex> list_top_level_comments()
+      [%Comment{}, ...]
+
+  """
+  def list_top_level_comments do
+    from(c in Comment, where: is_nil(c.parent_id), order_by: [asc: :inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single comment.
 
   Raises `Ecto.NoResultsError` if the Comment does not exist.
@@ -87,6 +101,11 @@ defmodule SonaComments.Comments do
   """
   def delete_comment(%Comment{} = comment) do
     Repo.delete(comment)
+  end
+
+  def get_replies(parent_ids) do
+    # TODO: implement
+    %{}
   end
 
   @doc """
