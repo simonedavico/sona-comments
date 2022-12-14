@@ -1,35 +1,44 @@
 defmodule SonaCommentsWeb.CommentLive.Index do
   use SonaCommentsWeb, :live_view
 
+  alias SonaComments.Comments.Comment
   alias SonaComments.Comments
   alias SonaComments.Comments.Comment
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :comments, list_comments())}
+    socket =
+      assign(socket,
+        comments: Comments.list_comments(),
+        changeset: Comments.change_comment()
+      )
+
+    {:ok, socket, temporary_assigns: [comments: []]}
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  def handle_event("save-comment", %{"comment" => comment_params}, socket) do
+    case Comments.create_comment(comment_params) do
+      {:ok, comment} ->
+        {:noreply,
+         assign(socket, comments: Comments.list_comments(), changeset: Comments.change_comment())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply,
+         socket
+         |> assign(changeset: changeset)
+         |> put_flash(:error, "We could not post your comment right now, please try again!")}
+    end
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Comment")
-    |> assign(:comment, Comments.get_comment!(id))
-  end
+  @impl true
+  def handle_event("validate", %{"comment" => comment_params}, socket) do
+    changeset =
+      %Comment{}
+      |> Comments.change_comment(comment_params)
+      |> Map.put(:action, :validate)
 
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Comment")
-    |> assign(:comment, %Comment{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Comments")
-    |> assign(:comment, nil)
+    {:noreply, assign(socket, changeset: changeset)}
   end
 
   @impl true
@@ -37,10 +46,6 @@ defmodule SonaCommentsWeb.CommentLive.Index do
     comment = Comments.get_comment!(id)
     {:ok, _} = Comments.delete_comment(comment)
 
-    {:noreply, assign(socket, :comments, list_comments())}
-  end
-
-  defp list_comments do
-    Comments.list_comments()
+    {:noreply, assign(socket, :comments, Comments.list_comments())}
   end
 end

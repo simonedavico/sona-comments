@@ -98,7 +98,7 @@ defmodule SonaComments.Comments do
       %Ecto.Changeset{data: %Comment{}}
 
   """
-  def change_comment(%Comment{} = comment, attrs \\ %{}) do
+  def change_comment(%Comment{} = comment \\ %Comment{}, attrs \\ %{}) do
     Comment.changeset(comment, attrs)
   end
 end

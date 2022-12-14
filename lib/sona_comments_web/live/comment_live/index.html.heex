@@ -1,4 +1,18 @@
-<h1>Listing Comments</h1>
+
+<.form :let={f} for={@changeset} phx-change="validate" phx-submit="save-comment" id="comment-form">
+  <%= textarea f,
+    :body,
+    rows: 2,
+    required: true,
+    placeholder: "Comment the post...",
+    oninvalid: "this.setCustomValidity('You cannot post an empty comment!')",
+    oninput: "this.setCustomValidity('')"
+  %>
+  <div class="comment_form-footer">
+    <button type="submit">Comment</button>
+  </div>
+</.form>
+
 
 <table>
   <thead>
@@ -8,7 +22,7 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="comments">
+  <tbody id="comments" phx-update="prepend" aria-live-region="polite">
     <%= for comment <- @comments do %>
       <tr id={"comment-#{comment.id}"}>
         <td><%= comment.body %></td>
