@@ -47,6 +47,8 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+config :pre_commit, commands: ["test", "credo --strict"]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
