@@ -1,19 +1,30 @@
-<.form :let={f} for={@changeset} phx-change="validate" phx-submit="save-comment" id="comment-form">
+<article class="w-full max-w-none prose prose-slate text-justify dark:prose-invert mb-12">
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+</article>
+
+<.form class="flex flex-col mb-8" :let={f} for={@changeset} phx-change="validate" phx-submit="save-comment" id="comment-form">
   <%= textarea f,
     :body,
-    rows: 2,
+    class: "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4",
+    rows: 4,
     required: true,
     placeholder: "Comment the post...",
     oninvalid: "this.setCustomValidity('You cannot post an empty comment!')",
     oninput: "this.setCustomValidity('')"
   %>
-  <div class="comment_form-footer">
-    <button type="submit">Comment</button>
-  </div>
+  <button
+    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ml-auto"
+    type="submit"
+  >
+    Comment
+  </button>
 </.form>
 
-<article id="comments" phx-update="prepend" aria-live-region="polite">
-  <%= for comment <- @comments do %>
-      <.live_component module={CommentThreadComponent} id={comment.id} comment={comment} />
-  <% end %>
-</article>
+<div>
+  <p class="prose prose-slate prose-2xl font-bold dark:prose-invert bold mb-4">Comments:</p>
+  <article id="comments" class="w-full" phx-update="prepend" aria-live-region="polite">
+    <%= for comment <- @comments do %>
+        <.live_component module={CommentThreadComponent} id={comment.id} comment={comment} />
+    <% end %>
+  </article>
+</div>

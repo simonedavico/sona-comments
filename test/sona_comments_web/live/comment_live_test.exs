@@ -66,13 +66,15 @@ defmodule SonaCommentsWeb.Integration.CommentLiveTest do
     test "replies to a comment", %{conn: conn, comments: comments} do
       {:ok, view, _html} = live(conn, Routes.comment_index_path(conn, :index))
 
+      comment_id = Enum.at(comments, 0).id
+
       view
-      |> element("#comment-#{Enum.at(comments, 0).id} > button", "Reply")
+      |> element("#comment-#{comment_id} #reply-to-comment-#{comment_id}", "Reply")
       |> render_click()
 
       result =
         view
-        |> form("#comment-#{Enum.at(comments, 0).id} form", comment: @reply_attrs)
+        |> form("#comment-#{comment_id} form", comment: @reply_attrs)
         |> render_submit()
 
       assert result =~ @reply_attrs.body

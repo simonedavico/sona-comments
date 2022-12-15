@@ -11,19 +11,28 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body>
-    <header>
-      <section class="container">
-        <nav>
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-        </nav>
-        <p>
-          Sona comments
-        </p>
+  <body class="bg-white dark:bg-gray-900">
+    <header class="flex justify-center">
+      <section class="py-6 w-3/4 xl:w-1/2 flex justify-between border-b-2 border-gray-100 dark:border-gray-700">
+      <p class="prose prose-slate prose-2xl font-bold dark:prose-invert">
+        Sona comments
+      </p>
+      <nav class="flex items-center">
+        <ul class="">
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+            <li>
+              <.link
+                patch={Routes.live_dashboard_path(@conn, :home)}
+                class=""
+              >
+                <p class="prose prose-slate prose-l font-bold dark:prose-invert hover:underline">
+                  LiveDashboard
+                </p>
+              </.link>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
       </section>
     </header>
     <%= @inner_content %>
