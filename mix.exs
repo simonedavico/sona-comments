@@ -33,21 +33,22 @@ defmodule SonaComments.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.15"},
-      {:phoenix_ecto, "~> 4.4"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
-      {:postgrex, ">= 0.0.0"},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:floki, ">= 0.30.0", only: :test},
+      {:jason, "~> 1.2"},
+      {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_dashboard, "~> 0.7"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.18"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.7"},
-      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:phoenix, "~> 1.6.15"},
+      {:plug_cowboy, "~> 2.5"},
+      {:postgrex, ">= 0.0.0"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"},
-      {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:telemetry_poller, "~> 1.0"}
     ]
   end
 

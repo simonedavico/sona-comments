@@ -1,7 +1,6 @@
 defmodule SonaCommentsWeb.CommentLive.Index do
   use SonaCommentsWeb, :live_view
 
-  alias SonaComments.Comments.Comment
   alias SonaComments.Comments
   alias SonaComments.Comments.Comment
 
