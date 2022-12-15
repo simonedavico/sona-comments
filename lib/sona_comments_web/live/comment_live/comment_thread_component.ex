@@ -30,7 +30,7 @@ defmodule SonaCommentsWeb.CommentLive.CommentThreadComponent do
             :body,
             rows: 2,
             required: true,
-            autofocus: true,
+            phx_hook: "autofocus",
             placeholder: "Your reply...",
             oninvalid: "this.setCustomValidity('You cannot post an empty comment!')",
             oninput: "this.setCustomValidity('')"
